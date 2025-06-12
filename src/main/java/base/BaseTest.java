@@ -51,6 +51,7 @@ public class BaseTest {
 		while (attempts < 3) {
 			try {
 				driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
+				driver.get("https://admin-demo.nopcommerce.com/login");
 				break;
 			} catch (SessionNotCreatedException e) {
 				attempts++;
@@ -61,7 +62,7 @@ public class BaseTest {
 
 		//driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
 
-		driver.get("https://admin-demo.nopcommerce.com/login");
+		//driver.get("https://admin-demo.nopcommerce.com/login");
 	}
 	
 	
