@@ -3,6 +3,7 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
+import org.openqa.selenium.remote.RemoteWebDriver;
 import utilities.CustomWait;
 
 public class LoginPage {
@@ -11,7 +12,7 @@ public class LoginPage {
 	
 	public CustomWait customWait;
 	
-	public LoginPage(WebDriver driver) {
+	public LoginPage(RemoteWebDriver driver) {
 		this.driver = driver;
 	}
 	
