@@ -27,7 +27,7 @@ public class BaseTest {
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--headless");
 		//driver = new RemoteWebDriver(new URL("http://localhost:4444"), options);
-		driver = new ChromeDriver(options);
+		driver = new ChromeDriver();
 		driver.manage().window().maximize();
 		driver.get("https://admin-demo.nopcommerce.com/login");
 	}
