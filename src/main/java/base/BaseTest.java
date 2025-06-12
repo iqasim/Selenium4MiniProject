@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.SessionNotCreatedException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -22,25 +24,43 @@ import org.testng.annotations.BeforeMethod;
 
 public class BaseTest {
 	
-	protected WebDriver driver;
+	protected RemoteWebDriver driver;
 	
 	@BeforeMethod
-	public void setUp() throws MalformedURLException {
-	/*	ChromeOptions options = new ChromeOptions();
-		//options.addArguments("--headless");
-		options.addArguments("--user-data-dir=/tmp/chrome-user-data-" + UUID.randomUUID());
-		//driver = new RemoteWebDriver(new URL("http://localhost:4444"), options);
-		driver = new ChromeDriver(options);*/
+	public void setUp() throws MalformedURLException, InterruptedException {
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("browserName", "chrome");
-		capabilities.setCapability("version", "latest");
+		capabilities.setCapability("browserVersion", "latest");
 		capabilities.setCapability("enableVNC", true);
 		capabilities.setCapability("enableVideo", false);
-		capabilities.setCapability("sessionTimeout", "5m");
-		// This ensures fresh profile for each session
-		capabilities.setCapability("env", new String[]{"HOME=/tmp/selenoid-user-$RANDOM"});
-		driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
-		driver.manage().window().maximize();
+
+		// Chrome-specific options
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("--no-sandbox");
+		options.addArguments("--disable-dev-shm-usage");
+		options.addArguments("--disable-gpu");
+		options.addArguments("--window-size=1920,1080");
+		capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+
+		// Environment variables
+		capabilities.setCapability("env", new ArrayList<String>() {{
+			add("HOME=/tmp/chrome-data-" + System.currentTimeMillis());
+		}});
+
+		int attempts = 0;
+		while (attempts < 3) {
+			try {
+				driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
+				break;
+			} catch (SessionNotCreatedException e) {
+				attempts++;
+				Thread.sleep(5000);
+			}
+		}
+
+
+		//driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
+
 		driver.get("https://admin-demo.nopcommerce.com/login");
 	}
 	

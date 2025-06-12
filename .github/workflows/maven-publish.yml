@@ -30,29 +30,42 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Start Docker daemon
+        run: sudo systemctl start docker
+
       - name: Start selenoid server
         uses: Xotabu4/selenoid-github-action@v2
         id: start-selenoid
         continue-on-error: false
         with:
-          args: -limit 10
+          args: -limit 10 -timeout 2m
           browsers: |
             chrome:
               default: "latest"
               versions:
                 latest:
                   image: "selenoid/chrome:latest"
-                  env: ["TZ=UTC"]
+                  env: ["TZ=UTC", "SE_NODE_MAX_SESSIONS=5"]
                   port: "4444"
                   volumes: 
-                    - "/tmp:/tmp"  # Allow access to temporary directories
+                    - "/tmp:/tmp"
+                    - "/dev/shm:/dev/shm"
                   extra_hosts: ["host.docker.internal:host-gateway"]
           last-versions: 1
 
-      - name: Run tests
-        run: mvn clean test -Pweb
-
-      - name: Cleanup containers
-        if: always()
+      - name: Verify Selenoid is running
         run: |
-          docker ps -aq | xargs -r docker rm -f
+          curl -s http://localhost:4444/status | jq .
+          docker ps
+
+      - name: Run tests with retry
+        run: |
+          mvn clean test -Pweb -Dselenide.remote=http://localhost:4444/wd/hub || \
+          (sleep 5 && mvn clean test -Pweb -Dselenide.remote=http://localhost:4444/wd/hub)
+
+      - name: Collect logs on failure
+        if: failure()
+        run: |
+          docker logs $(docker ps -aqf "ancestor=selenoid/chrome:latest")
+          docker ps -a
+          curl http://localhost:4444/status
