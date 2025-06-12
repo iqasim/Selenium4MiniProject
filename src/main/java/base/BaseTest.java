@@ -26,7 +26,8 @@ public class BaseTest {
 	public void setUp() throws MalformedURLException {
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--headless");
-		driver = new RemoteWebDriver(new URL("http://localhost:4444"), options);
+		//driver = new RemoteWebDriver(new URL("http://localhost:4444"), options);
+		driver = new ChromeDriver(options);
 		driver.manage().window().maximize();
 		driver.get("https://admin-demo.nopcommerce.com/login");
 	}
