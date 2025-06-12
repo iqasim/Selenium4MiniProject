@@ -24,7 +24,7 @@ import org.testng.annotations.BeforeMethod;
 
 public class BaseTest {
 	
-	protected RemoteWebDriver driver;
+	protected WebDriver driver;
 	
 	@BeforeMethod
 	public void setUp() throws MalformedURLException, InterruptedException {

@@ -12,7 +12,7 @@ public class LoginPage {
 	
 	public CustomWait customWait;
 	
-	public LoginPage(RemoteWebDriver driver) {
+	public LoginPage(WebDriver driver) {
 		this.driver = driver;
 	}
 	
