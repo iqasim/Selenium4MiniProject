@@ -9,8 +9,7 @@ import utilities.CustomWait;
 public class LoginPage {
 	
 	private WebDriver driver;
-	
-	public CustomWait customWait;
+	private CustomWait customWait;
 	
 	public LoginPage(WebDriver driver) {
 		this.driver = driver;
