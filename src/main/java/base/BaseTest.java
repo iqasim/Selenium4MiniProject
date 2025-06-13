@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.SessionNotCreatedException;
@@ -26,6 +27,7 @@ public class BaseTest {
 	
 	protected WebDriver driver;
 	
+/*
 	@BeforeMethod
 	public void setUp() throws MalformedURLException, InterruptedException {
 		DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -64,6 +66,29 @@ public class BaseTest {
 		//driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
 
 		//driver.get("https://admin-demo.nopcommerce.com/login");
+	}
+*/
+
+
+
+	@BeforeMethod
+	public void setUp() {
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments(
+				 // New headless mode "--headless=new"
+				"--no-sandbox",
+				"--disable-dev-shm-usage",
+				"--window-size=1920,1080"
+		);
+
+		// For local execution
+		WebDriverManager.chromedriver().setup();
+		driver = new ChromeDriver(options);
+
+		// For Grid execution (use with Option 3)
+		// driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), options);
+
+		driver.get("https://admin-demo.nopcommerce.com/login");
 	}
 	
 	
